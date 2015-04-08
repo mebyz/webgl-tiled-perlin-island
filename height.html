@@ -7,7 +7,9 @@
 <script src='threex.GeometryUtils.js'></script>
 <script src='threex.terrain.js'></script>
 <script src='threex.grass.js'></script>
+<script src="dat.js"></script>
 <script src="Mirror.js"></script>
+<script src="Sky.js"></script>
 <script src="WaterShader.js"></script>
 
 <script id="vertexShader" type="x-shader/x-vertex">
@@ -51,6 +53,79 @@ void main()
 <div id="blocker"></div>
 <div id="instructions"></div>
 <script>
+
+function initSky(){
+
+				// Add Sky Mesh
+				sky = new THREE.Sky();
+				scene.add( sky.mesh );
+
+
+				// Add Sun Helper
+				sunSphere = new THREE.Mesh( new THREE.SphereGeometry( 20000, 30, 30 ),
+					new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false }));
+				sunSphere.position.y = -700000;
+				sunSphere.visible = true;
+				scene.add( sunSphere );
+
+				/// GUI
+
+				var effectController  = {
+					turbidity: 10,
+					reileigh: 2,
+					mieCoefficient: 0.005,
+					mieDirectionalG: 0.8,
+					luminance: 1,
+					inclination: 0.49, // elevation / inclination
+					azimuth: 0.25, // Facing front,
+					sun: !true
+				}
+
+				var distance = 400000;
+
+				function guiChanged() {
+					var uniforms = sky.uniforms;
+					uniforms.turbidity.value = effectController.turbidity;
+					uniforms.reileigh.value = effectController.reileigh;
+					uniforms.luminance.value = effectController.luminance;
+					uniforms.mieCoefficient.value = effectController.mieCoefficient;
+					uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+
+					var theta = Math.PI * (effectController.inclination - 0.5);
+					var phi = 2 * Math.PI * (effectController.azimuth - 0.5);
+
+					sunSphere.position.x = distance * Math.cos(phi);
+					sunSphere.position.y = distance * Math.sin(phi) * Math.sin(theta);
+					sunSphere.position.z = distance * Math.sin(phi) * Math.cos(theta);
+
+					sunSphere.visible = effectController.sun;
+
+					sky.uniforms.sunPosition.value.copy(sunSphere.position);
+
+				}
+
+
+				var gui = new dat.GUI();
+
+
+				gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
+				gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
+				gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
+				gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
+				gui.add( effectController, "luminance", 0.0, 2).onChange( guiChanged );;
+				gui.add( effectController, "inclination", 0, 1, 0.0001).onChange( guiChanged );
+				gui.add( effectController, "azimuth", 0, 1, 0.0001).onChange( guiChanged );
+				gui.add( effectController, "sun").onChange( guiChanged );
+
+
+				guiChanged();
+
+
+				camera.lookAt(sunSphere.position)
+
+
+			}
+
 	var loadImage = function(url) {
 	    return THREE.ImageUtils.loadTexture(url,null,function(){});
 	}
@@ -72,7 +147,7 @@ void main()
 	var velocity = new THREE.Vector3();
 	var onRenderFcts= [];
 	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000);
+	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000000);
 	controls = new THREE.PointerLockControls( camera );
 	scene.add( controls.getObject() );
 	var blocker = document.getElementById( 'blocker' );
@@ -354,9 +429,12 @@ scene.add(gmesh)
 gmesh    = new THREEx.createGrassTufts(posgrass4,'images/flowers02.png')
 scene.add(gmesh)
 
+
+initSky();
+
 var parameters = {
-				width: 10000,
-				height: 10000,
+				width: 10000000,
+				height: 10000000,
 				widthSegments: 500,
 				heightSegments: 500,
 				depth: 1500,
@@ -390,9 +468,11 @@ var parameters = {
 
 				mirrorMesh.add( water );
 				mirrorMesh.rotation.x = - Math.PI * 0.5;
-				mirrorMesh.position.y = - 1600;
+				mirrorMesh.position.y = - 1500;
 				mirrorMesh.position.x =  5000;
-				mirrorMesh.position.z =  5000;
+				mirrorMesh.position.z =  5000;	
+				mirrorMesh.scale.multiplyScalar(.1) 
+
 				scene.add( mirrorMesh );
 
 
@@ -452,14 +532,14 @@ if ( controlsEnabled ) {
 		if (controls.getObject().position.x<1+1 || controls.getObject().position.z<1+1
 			||
 			controls.getObject().position.x>10000*6-1 || controls.getObject().position.z >10000*6-1)
-			controls.getObject().position.y=-1500
+			controls.getObject().position.y=-1300
 		else {
 
 //		controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx/2, cz/2)+400
 
 
 	controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx, cz)+400
-		if (controls.getObject().position.y<-1500)controls.getObject().position.y=-1500
+		if (controls.getObject().position.y<-1300)controls.getObject().position.y=-1300
 		}
 
 //				mirrorMesh.position.y = - 1600;
