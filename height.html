@@ -130,6 +130,8 @@ function initSky(){
 	    return THREE.ImageUtils.loadTexture(url,null,function(){});
 	}
 
+	var TILES = 6
+
 	var moveForward = false;
 	var moveBackward = false;
 	var moveLeft = false;
@@ -361,52 +363,11 @@ snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping;
 
 
 
-for (var i = 0; i < 6; i++) {
-for (var j = 0; j < 6; j++) {
+for (var i = 0; i < TILES; i++) {
+for (var j = 0; j < TILES; j++) {
 
-	 heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
-	THREEx.Terrain.simplexHeightMap(heightMap,63*i,63*j)
-
-	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,i,j)
-	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
-
-	var canvas	= THREEx.Terrain.heightMapToCanvas(heightMap)
-
-	document.body.appendChild(canvas)
-
-
-var texture = new THREE.Texture(canvas);
-texture.needsUpdate = true;
-
-	var customUniforms = {
-		bumpTexture:	{ type: "t", value: texture },
-		bumpScale:	    { type: "f", value: 1.0 },
-		oceanTexture:	{ type: "t", value: oceanTexture },
-		sandyTexture:	{ type: "t", value: sandyTexture },
-		grassTexture:	{ type: "t", value: grassTexture },
-		rockyTexture:	{ type: "t", value: rockyTexture },
-		snowyTexture:	{ type: "t", value: snowyTexture },
-	};
 	
-	var material = new THREE.ShaderMaterial( 
-	{
-	    uniforms: customUniforms,
-		vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
-		fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-	}   );
-	 mesh	= new THREE.Mesh( geometry, material );
-	scene.add( mesh );
-	mesh.position.x	= 1000*i+500
-	mesh.position.z	= 1000*j+500
-    mesh.scale.z	= 0.01
-
-	mesh.rotateX(-Math.PI/2)
-	mesh.scale.multiplyScalar(1000) 
-
-	heightMaps[heightMaps.length]=heightMap;
-	meshes[meshes.length]=mesh;
-	geometries[geometries.length]=geometry;
-	materials[materials.length]=material;
+addTile(i,j)
 
 }
 }
@@ -476,6 +437,55 @@ var parameters = {
 				scene.add( mirrorMesh );
 
 
+
+function addTile(x,y) {
+
+	 heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
+	THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+
+	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,i,j)
+	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
+
+	var canvas	= THREEx.Terrain.heightMapToCanvas(heightMap)
+
+	document.body.appendChild(canvas)
+
+
+var texture = new THREE.Texture(canvas);
+texture.needsUpdate = true;
+
+	var customUniforms = {
+		bumpTexture:	{ type: "t", value: texture },
+		bumpScale:	    { type: "f", value: 1.0 },
+		oceanTexture:	{ type: "t", value: oceanTexture },
+		sandyTexture:	{ type: "t", value: sandyTexture },
+		grassTexture:	{ type: "t", value: grassTexture },
+		rockyTexture:	{ type: "t", value: rockyTexture },
+		snowyTexture:	{ type: "t", value: snowyTexture },
+	};
+	
+	var material = new THREE.ShaderMaterial( 
+	{
+	    uniforms: customUniforms,
+		vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
+		fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+	}   );
+	 mesh	= new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+	mesh.position.x	= 1000*x+500
+	mesh.position.z	= 1000*y+500
+    mesh.scale.z	= 0.01
+
+	mesh.rotateX(-Math.PI/2)
+	mesh.scale.multiplyScalar(1000) 
+
+	heightMaps[x*TILES+y]=heightMap;
+	meshes[x*TILES+y]=mesh;
+	geometries[x*TILES+y]=geometry;
+	materials[x*TILES+y]=material;
+
+}
+
 	
 	onRenderFcts.push(function(delta, now){
 //		camera.position.x += (mouse.x*500000 - camera.position.x) 
@@ -526,12 +536,13 @@ if ( controlsEnabled ) {
 		//if (camera.position.x==NaN)camera.position=new Vector3(0,0,0)
 		cx=controls.getObject().position.x%1000;
 		cz=controls.getObject().position.z%1000;
-		tcx=Math.floor(controls.getObject().position.x/1000)*6;
+		tcx=Math.floor(controls.getObject().position.x/1000)*TILES;
 		tcz=Math.floor(controls.getObject().position.z/1000);
 		//console.log(tcx+tcz)
 		if (controls.getObject().position.x<1+1 || controls.getObject().position.z<1+1
-			||
-			controls.getObject().position.x>1000*6-1 || controls.getObject().position.z >1000*6-1)
+//			||
+//			controls.getObject().position.x>1000*TILES-1 || controls.getObject().position.z >1000*TILES-1
+)
 			controls.getObject().position.y=-100
 		else {
 

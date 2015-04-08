@@ -51,14 +51,14 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			var xs = 0;
   var ys = 0;
  
-  xs = x - 150;
+  xs = x - 350;
   xs = xs * xs;
  
-  ys = z - 150;
+  ys = z - 350;
   ys = ys * ys;
  
   var d= Math.sqrt( xs + ys );
-  height-=d/150
+  height-=d/250
 
 			heightMap[x-xx][z-zz]	= height*20
 
@@ -117,7 +117,7 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j){
 			vertex.z	= (height-0.5)*2
 			var r = Math.round(Math.random()*10);
 			var n = new THREE.Vector3(x*16+i*1000,vertex.z*10,z*16+j*1000);
-			if (r<3 && height > -10){
+			if (r<3 && height > 0){
 			posgrass.push(n);
 			}
 			if (r>=3 && r<9 && height >  0 ){
