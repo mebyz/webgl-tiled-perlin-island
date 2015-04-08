@@ -396,12 +396,12 @@ texture.needsUpdate = true;
 	}   );
 	 mesh	= new THREE.Mesh( geometry, material );
 	scene.add( mesh );
-	mesh.position.x	= 10000*i+5000
-	mesh.position.z	= 10000*j+5000
+	mesh.position.x	= 1000*i+500
+	mesh.position.z	= 1000*j+500
     mesh.scale.z	= 0.01
 
 	mesh.rotateX(-Math.PI/2)
-	mesh.scale.multiplyScalar(10000) 
+	mesh.scale.multiplyScalar(1000) 
 
 	heightMaps[heightMaps.length]=heightMap;
 	meshes[meshes.length]=mesh;
@@ -433,8 +433,8 @@ scene.add(gmesh)
 initSky();
 
 var parameters = {
-				width: 10000000,
-				height: 10000000,
+				width: 10000,
+				height: 10000,
 				widthSegments: 500,
 				heightSegments: 500,
 				depth: 1500,
@@ -468,10 +468,10 @@ var parameters = {
 
 				mirrorMesh.add( water );
 				mirrorMesh.rotation.x = - Math.PI * 0.5;
-				mirrorMesh.position.y = - 1500;
-				mirrorMesh.position.x =  5000;
-				mirrorMesh.position.z =  5000;	
-				mirrorMesh.scale.multiplyScalar(.1) 
+				mirrorMesh.position.y = - 150;
+				mirrorMesh.position.x =  500;
+				mirrorMesh.position.z =  500;	
+				mirrorMesh.scale.multiplyScalar(1) 
 
 				scene.add( mirrorMesh );
 
@@ -500,11 +500,11 @@ if ( controlsEnabled ) {
 
 					velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-					if ( moveForward ) velocity.z -= 4000.0 * delta*100;
-					if ( moveBackward ) velocity.z += 4000.0 * delta*100;
+					if ( moveForward ) velocity.z -= 400.0 * delta*100;
+					if ( moveBackward ) velocity.z += 400.0 * delta*100;
 
-					if ( moveLeft ) velocity.x -= 4000.0 * delta*100;
-					if ( moveRight ) velocity.x += 4000.0 * delta*100;
+					if ( moveLeft ) velocity.x -= 400.0 * delta*100;
+					if ( moveRight ) velocity.x += 400.0 * delta*100;
 
 					controls.getObject().translateX( velocity.x * delta );
 					//controls.getObject().translateY( velocity.y * delta );
@@ -524,22 +524,22 @@ if ( controlsEnabled ) {
 				}
 		//console.log(camera.position)
 		//if (camera.position.x==NaN)camera.position=new Vector3(0,0,0)
-		cx=controls.getObject().position.x%10000;
-		cz=controls.getObject().position.z%10000;
-		tcx=Math.floor(controls.getObject().position.x/10000)*6;
-		tcz=Math.floor(controls.getObject().position.z/10000);
+		cx=controls.getObject().position.x%1000;
+		cz=controls.getObject().position.z%1000;
+		tcx=Math.floor(controls.getObject().position.x/1000)*6;
+		tcz=Math.floor(controls.getObject().position.z/1000);
 		//console.log(tcx+tcz)
 		if (controls.getObject().position.x<1+1 || controls.getObject().position.z<1+1
 			||
-			controls.getObject().position.x>10000*6-1 || controls.getObject().position.z >10000*6-1)
-			controls.getObject().position.y=-1300
+			controls.getObject().position.x>1000*6-1 || controls.getObject().position.z >1000*6-1)
+			controls.getObject().position.y=-100
 		else {
 
 //		controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx/2, cz/2)+400
 
 
-	controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx, cz)+400
-		if (controls.getObject().position.y<-1300)controls.getObject().position.y=-1300
+	controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx, cz)+20
+		if (controls.getObject().position.y<-100)controls.getObject().position.y=-100
 		}
 
 //				mirrorMesh.position.y = - 1600;

@@ -1,7 +1,7 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.createGrassTufts	= function(positions,t){
-	var geometry	= new THREE.PlaneGeometry(400, 200)
+	var geometry	= new THREE.PlaneGeometry(40, 20)
 	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, geometry.parameters.height/2, 0 ) );
 			
 	geometry.faces.forEach(function(face){
@@ -31,7 +31,7 @@ THREEx.createGrassTufts	= function(positions,t){
 	var material	= new THREE.MeshPhongMaterial({
 		map		: texture,
 		alphaTest	: 0.8,
-		side:THREE.DoubleSide
+		//side:THREE.DoubleSide
 	})
 	var mesh	= new THREE.Mesh(mergedGeo, material)
 	return mesh	
