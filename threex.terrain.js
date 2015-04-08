@@ -40,12 +40,12 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			var height	= 0
 			var level	= 8
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.125
-			level	*= 3
+			level	*= 5
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.35
 			level	*= 2
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.5
 			level	*= 2
-			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 1
+			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 2
 			height	/= 1+0.5+0.25+0.125
 			// put the height in the heightMap
 			var xs = 0;
@@ -101,7 +101,7 @@ THREEx.Terrain.heightMapToCanvas	= function(heightMap, canvas){
  * @param  {Array} heightMap the heightmap
  * @return {THREE.Geometry}  the just built geometry
  */
-THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap){
+THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j){
 	// get heightMap dimensions
 	var width	= heightMap.length
 	var depth	= heightMap[0].length
@@ -115,6 +115,23 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap){
 			// set the vertex.z to a normalized height
 			var vertex	= geometry.vertices[x + z * width]			
 			vertex.z	= (height-0.5)*2
+			var r = Math.round(Math.random()*10);
+			if (r==1 && height > 0){
+			var n = new THREE.Vector3(x*160+i*10000,vertex.z*100,z*160+j*10000);
+			posgrass.push(n);
+			}
+			if (r==3 && height > 0){
+			var n = new THREE.Vector3(x*160+i*10000,vertex.z*100,z*160+j*10000);
+			posgrass2.push(n);
+			}
+			if (r==5 && height > 0){
+			var n = new THREE.Vector3(x*160+i*10000,vertex.z*100,z*160+j*10000);
+			posgrass3.push(n);
+			}
+			if (r==8 && height > 0){
+			var n = new THREE.Vector3(x*160+i*10000,vertex.z*100,z*160+j*10000);
+			posgrass4.push(n);
+			}
 		}
 	}
 	// notify the geometry need to update vertices
@@ -168,11 +185,12 @@ THREEx.Terrain.planeToHeightMapCoords	= function(heightMap, planeMesh, x, z){
 	var position	= new THREE.Vector3(x, 0, z)
 
 	// set position relative to planeMesh position
+	if (planeMesh.position == undefined)
 	position.sub(planeMesh.position)
 
 	// heightMap origin is at its top-left, while planeMesh origin is at its center
-	position.x	+= planeMesh.geometry.width /2 * planeMesh.scale.x
-	position.z	+= planeMesh.geometry.height/2 * planeMesh.scale.y
+//	position.x	+= planeMesh.geometry.width /2 * planeMesh.scale.x
+//	position.z	+= planeMesh.geometry.height/2 * planeMesh.scale.y
 
 	// normalize it from [0,1] for the heightmap
 	position.x	/= planeMesh.geometry.width * planeMesh.scale.x
@@ -185,11 +203,16 @@ THREEx.Terrain.planeToHeightMapCoords	= function(heightMap, planeMesh, x, z){
 	// convert it in heightMap coordinate
 	position.x	*= (width-1)
 	position.z	*= (depth-1)
+	
+//	position.x	-= 30
+//	position.z	-= 30
 
 	position.y	= THREEx.Terrain.heightMapToHeight(heightMap, position.x, position.z)
 	position.y	= (position.y-0.5)*2
 	position.y	*= planeMesh.scale.z
 
+	$('#pos2').html(position.x+' '+ position.z)
+	
 	return position.y
 }
 
