@@ -51,14 +51,14 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			var xs = 0;
   var ys = 0;
  
-  xs = x - 350;
+  xs = x - 5000;
   xs = xs * xs;
  
-  ys = z - 350;
+  ys = z - 5000;
   ys = ys * ys;
  
   var d= Math.sqrt( xs + ys );
-  height-=d/250
+  height-=d/7000
 
 			heightMap[x-xx][z-zz]	= height*20
 
@@ -80,6 +80,7 @@ THREEx.Terrain.heightMapToCanvas	= function(heightMap, canvas){
 	canvas		= canvas	|| document.createElement('canvas')
 	canvas.width	= width
 	canvas.height	= depth
+	canvas.style.position	= 'absolute'
 	var context	= canvas.getContext("2d");
 	// loop on each pixel of the canvas
 	for(var x = 0; x < canvas.width; x++){
@@ -123,11 +124,15 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j){
 			if (r>=3 && r<9 && height >  0 ){
 			posgrass2.push(n);
 			}
-			if (r==9 && height >  0){
+			if (r==8 && height >  0){
 			posgrass3.push(n);
 			}
-			if (r==10 && height >  0){
+			if (r==9 && height >  0){
 			posgrass4.push(n);
+			}
+		    r = Math.round(Math.random()*1000);
+			if (r==10 && height >  0){
+			postrees.push(n);
 			}
 		}
 	}

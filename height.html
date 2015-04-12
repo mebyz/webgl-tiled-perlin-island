@@ -11,6 +11,8 @@
 <script src="Mirror.js"></script>
 <script src="Sky.js"></script>
 <script src="WaterShader.js"></script>
+<script src="nature.js"></script>
+<script type="text/javascript" src="OBJLoader.js"></script>
 
 <script id="vertexShader" type="x-shader/x-vertex">
 uniform sampler2D bumpTexture;
@@ -54,6 +56,19 @@ void main()
 <div id="instructions"></div>
 <script>
 
+var MAXTILES = 100
+
+var MAP = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAP[i] = new Array(MAXTILES);
+  }
+
+var MAPMESHES = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAPMESHES[i] = new Array(MAXTILES);
+  }
+
+	var okok=true;
 function initSky(){
 
 				// Add Sky Mesh
@@ -81,7 +96,7 @@ function initSky(){
 					sun: !true
 				}
 
-				var distance = 400000;
+
 
 				function guiChanged() {
 					var uniforms = sky.uniforms;
@@ -126,11 +141,65 @@ function initSky(){
 
 			}
 
+
+var distance = 400000;
+				var nature_models=[];
+				 var i=0;
+
+	        for(var index in nature_) {
+	            var fobj='../'+nature_[index].obj;
+	            var ftext = '/'+nature_[index].png;
+	            loadTree(ftext,fobj,i++);
+	        }
+	        
+function loadTree(t,o,i) {
+        var manager = new THREE.LoadingManager();
+        manager.onProgress = function ( item, loaded, total ) {};
+        var texture = new THREE.Texture();
+        var onProgress = function ( xhr ) {};
+        var onError = function ( xhr ) {};
+        var loader = new THREE.ImageLoader( manager );
+        loader.load( t, function ( image ) {
+            texture.image = image;
+            texture.needsUpdate = true;
+        } );
+        var loader = new THREE.OBJLoader( manager );
+        loader.load( o, function ( object ) {
+            object.traverse( function ( child ) {
+                if ( child instanceof THREE.Mesh ) {
+                    child.material.map = texture;
+                    child.material.transparent = true;
+                    child.material.alphaTest= 0.5;
+                    child.material.side= THREE.DoubleSide;
+                }
+            } );
+            //console.log(i+' '+t+' '+object.id)
+            nature_models[i]=object;;
+        }, onProgress, onError );
+    }
+
 	var loadImage = function(url) {
 	    return THREE.ImageUtils.loadTexture(url,null,function(){});
 	}
 
-	var TILES = 6
+
+var oceanTexture = new loadImage( 'dirt-512.jpg' );
+oceanTexture.wrapS = oceanTexture.wrapT = THREE.RepeatWrapping; 
+
+var sandyTexture = new loadImage( 'sand-512.jpg' );
+sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping; 
+
+var grassTexture = new loadImage( 'grass-512.jpg' );
+grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping; 
+
+var rockyTexture = new loadImage( 'rock-512.jpg' );
+rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping; 
+
+var snowyTexture = new loadImage( 'snow-512.jpg' );
+snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping; 
+
+
+	var TILES = 2
 
 	var moveForward = false;
 	var moveBackward = false;
@@ -141,6 +210,7 @@ function initSky(){
 	var posgrass2 = [];
 	var posgrass3 = [];
 	var posgrass4 = [];
+	var postrees = [];
 	var  controls;
 	var controlsEnabled = false;
 	var renderer	= new THREE.WebGLRenderer();
@@ -151,6 +221,8 @@ function initSky(){
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000000);
 	controls = new THREE.PointerLockControls( camera );
+//	controls.getObject().position.x=3000
+//controls.getObject().position.z=3000
 	scene.add( controls.getObject() );
 	var blocker = document.getElementById( 'blocker' );
 	var instructions = document.getElementById( 'instructions' );
@@ -340,27 +412,6 @@ function initSky(){
 
 var cube
 var heightMap,mesh,geometry,material;
-var heightMaps,meshes,geometries,materials;
-heightMaps=[];
-meshes=[];
-geometries=[];
-materials=[];
-
-var oceanTexture = new loadImage( 'dirt-512.jpg' );
-oceanTexture.wrapS = oceanTexture.wrapT = THREE.RepeatWrapping; 
-
-var sandyTexture = new loadImage( 'sand-512.jpg' );
-sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping; 
-
-var grassTexture = new loadImage( 'grass-512.jpg' );
-grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping; 
-
-var rockyTexture = new loadImage( 'rock-512.jpg' );
-rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping; 
-
-var snowyTexture = new loadImage( 'snow-512.jpg' );
-snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping; 
-
 
 
 for (var i = 0; i < TILES; i++) {
@@ -390,6 +441,21 @@ scene.add(gmesh)
 gmesh    = new THREEx.createGrassTufts(posgrass4,'images/flowers02.png')
 scene.add(gmesh)
 
+setTimeout(function(){
+
+
+for (var i = 0; i < postrees.length; i++) {
+
+var r = Math.round(Math.random()*68)
+if (nature_models[r]!= undefined){ 
+var child = nature_models[r].clone();
+child.name="nature_"+i;
+child.position.set(postrees[i].x, postrees[i].y , postrees[i].z);
+scene.add(child);
+child.updateMatrixWorld(true);
+}
+}
+},5000)
 
 initSky();
 
@@ -437,13 +503,15 @@ var parameters = {
 				scene.add( mirrorMesh );
 
 
-
-function addTile(x,y) {
-
-	 heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
+var worker = new Worker('/worker.js');
+worker.onmessage = function(e) {
+var data = e.data;
+	 x=data.data.x
+  y=data.data.y
+ heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
 	THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
 
-	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,i,j)
 	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
 
 	var canvas	= THREEx.Terrain.heightMapToCanvas(heightMap)
@@ -478,11 +546,75 @@ texture.needsUpdate = true;
 
 	mesh.rotateX(-Math.PI/2)
 	mesh.scale.multiplyScalar(1000) 
+MAP[x][y]=heightMap;
+MAPMESHES[x][y]=mesh;
 
-	heightMaps[x*TILES+y]=heightMap;
-	meshes[x*TILES+y]=mesh;
-	geometries[x*TILES+y]=geometry;
-	materials[x*TILES+y]=material;
+}
+//worker.postMessage({
+//  some_data: 'foo',
+//});
+
+
+function addTile(x,y,no) {
+
+if (no!=true) {
+
+ heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
+	THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
+
+	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
+
+	var canvas	= THREEx.Terrain.heightMapToCanvas(heightMap)
+
+	document.body.appendChild(canvas)
+
+
+var texture = new THREE.Texture(canvas);
+texture.needsUpdate = true;
+
+	var customUniforms = {
+		bumpTexture:	{ type: "t", value: texture },
+		bumpScale:	    { type: "f", value: 1.0 },
+		oceanTexture:	{ type: "t", value: oceanTexture },
+		sandyTexture:	{ type: "t", value: sandyTexture },
+		grassTexture:	{ type: "t", value: grassTexture },
+		rockyTexture:	{ type: "t", value: rockyTexture },
+		snowyTexture:	{ type: "t", value: snowyTexture },
+	};
+	
+	var material = new THREE.ShaderMaterial( 
+	{
+	    uniforms: customUniforms,
+		vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
+		fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+	}   );
+	 mesh	= new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+	mesh.position.x	= 1000*x+500
+	mesh.position.z	= 1000*y+500
+    mesh.scale.z	= 0.01
+
+	mesh.rotateX(-Math.PI/2)
+	mesh.scale.multiplyScalar(1000) 
+MAP[x][y]=heightMap;
+MAPMESHES[x][y]=mesh;
+
+}else {
+
+//geo = new THREEx.Terrain.PlaneGeometry( 1, 1,63, 63);
+//heightMap	= null//THREEx.Terrain.allocateHeightMap(64, 64)
+	//THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+
+worker.postMessage({
+  x: x,
+  y: y//,geo:geo,heightMap:heightMap
+});
+
+	MAP[x][y]=1;
+MAPMESHES[x][y]=1;
+
+}
 
 }
 
@@ -510,11 +642,11 @@ if ( controlsEnabled ) {
 
 					velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-					if ( moveForward ) velocity.z -= 400.0 * delta*100;
-					if ( moveBackward ) velocity.z += 400.0 * delta*100;
+					if ( moveForward ) velocity.z -= 40.0 * delta*100;
+					if ( moveBackward ) velocity.z += 40.0 * delta*100;
 
-					if ( moveLeft ) velocity.x -= 400.0 * delta*100;
-					if ( moveRight ) velocity.x += 400.0 * delta*100;
+					if ( moveLeft ) velocity.x -= 40.0 * delta*100;
+					if ( moveRight ) velocity.x += 40.0 * delta*100;
 
 					controls.getObject().translateX( velocity.x * delta );
 					//controls.getObject().translateY( velocity.y * delta );
@@ -536,8 +668,48 @@ if ( controlsEnabled ) {
 		//if (camera.position.x==NaN)camera.position=new Vector3(0,0,0)
 		cx=controls.getObject().position.x%1000;
 		cz=controls.getObject().position.z%1000;
-		tcx=Math.floor(controls.getObject().position.x/1000)*TILES;
+
+
+
+
+
+
+		tcx=Math.floor(controls.getObject().position.x/1000);
 		tcz=Math.floor(controls.getObject().position.z/1000);
+
+
+
+
+
+var nearbytiles = [];
+
+
+ for (var i = tcx-TILES/2; i <= tcx+TILES/2; i++) {
+   for (var j = tcz-TILES/2; j <= tcz+TILES/2; j++) {
+
+if (i>=0 && j >= 0)
+nearbytiles.push(i+'_'+j);
+}
+}
+//console.log(nearbytiles);
+ for (var i = 0; i < MAXTILES; i++) {
+   for (var j = 0; j < MAXTILES; j++) {
+
+   		if (nearbytiles.indexOf(i+'_'+j)<0 && MAP[i][j]!=undefined) {
+  // 			console.log('NEED TO DESTROY : '+i+'_'+j)
+//   			MAP[i][j] = null;
+   		}
+   		if (nearbytiles.indexOf(i+'_'+j)>-1 && MAP[i][j]==undefined) {
+   			console.log('NEED TO CREATE :'+i+'_'+j)
+   			addTile(i,j,true)
+   		}
+
+	}
+}  
+
+
+
+
 		//console.log(tcx+tcz)
 		if (controls.getObject().position.x<1+1 || controls.getObject().position.z<1+1
 //			||
@@ -549,7 +721,7 @@ if ( controlsEnabled ) {
 //		controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx/2, cz/2)+400
 
 
-	controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx, cz)+20
+	controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(MAP[tcx][tcz], MAPMESHES[tcx][tcz], cx, cz)+20
 		if (controls.getObject().position.y<-100)controls.getObject().position.y=-100
 		}
 
@@ -557,6 +729,11 @@ if ( controlsEnabled ) {
 				mirrorMesh.position.x =  controls.getObject().position.x;
 				mirrorMesh.position.z =  controls.getObject().position.z;
 $('#pos').html(Math.round(controls.getObject().position.x)+' '+Math.round(controls.getObject().position.y)+' '+Math.round(controls.getObject().position.z))
+
+
+
+
+
 
 
 		//camera.lookAt( new THREE.Vector3(100000,-2000,100000))
@@ -573,9 +750,9 @@ $('#pos').html(Math.round(controls.getObject().position.x)+' '+Math.round(contro
 				water.render();
 		renderer.render( scene, camera );		
 	})
-
 	var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec){
+		if (okok == true) {
 		requestAnimationFrame( animate );
 		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
 		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
@@ -583,6 +760,7 @@ $('#pos').html(Math.round(controls.getObject().position.x)+' '+Math.round(contro
 		onRenderFcts.forEach(function(onRenderFct){
 			onRenderFct(deltaMsec/1000, nowMsec/1000)
 		})
+		}
 	})
 </script>
 </body>
