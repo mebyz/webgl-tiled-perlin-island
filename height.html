@@ -56,6 +56,7 @@ void main()
 <div id="instructions"></div>
 <script>
 
+var HEIGHTMAPSIZE = 32
 var MAXTILES = 100
 
 var MAP = new Array(MAXTILES);
@@ -508,8 +509,8 @@ worker.onmessage = function(e) {
 var data = e.data;
 	 x=data.data.x
   y=data.data.y
- heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
-	THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+ heightMap	= THREEx.Terrain.allocateHeightMap(HEIGHTMAPSIZE, HEIGHTMAPSIZE)
+	THREEx.Terrain.simplexHeightMap(heightMap,(HEIGHTMAPSIZE-1)*x,(HEIGHTMAPSIZE-1)*y)
 	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
 
 	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
@@ -548,7 +549,9 @@ texture.needsUpdate = true;
 	mesh.scale.multiplyScalar(1000) 
 MAP[x][y]=heightMap;
 MAPMESHES[x][y]=mesh;
-
+geometry.dispose();
+material.dispose();
+texture.dispose();
 }
 //worker.postMessage({
 //  some_data: 'foo',
@@ -559,8 +562,8 @@ function addTile(x,y,no) {
 
 if (no!=true) {
 
- heightMap	= THREEx.Terrain.allocateHeightMap(64, 64)
-	THREEx.Terrain.simplexHeightMap(heightMap,63*x,63*y)
+ heightMap	= THREEx.Terrain.allocateHeightMap(HEIGHTMAPSIZE, HEIGHTMAPSIZE)
+	THREEx.Terrain.simplexHeightMap(heightMap,(HEIGHTMAPSIZE-1)*x,(HEIGHTMAPSIZE-1)*y)
 	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
 
 	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
@@ -696,8 +699,14 @@ nearbytiles.push(i+'_'+j);
    for (var j = 0; j < MAXTILES; j++) {
 
    		if (nearbytiles.indexOf(i+'_'+j)<0 && MAP[i][j]!=undefined) {
-  // 			console.log('NEED TO DESTROY : '+i+'_'+j)
-//   			MAP[i][j] = null;
+   			console.log('NEED TO DESTROY : '+i+'_'+j)
+   			scene.remove(MAPMESHES[i][j]);
+
+MAPMESHES[i][j].geometry.dispose();
+MAPMESHES[i][j].material.dispose();
+MAPMESHES[i][j]=null
+
+   			 MAP[i][j] = null;
    		}
    		if (nearbytiles.indexOf(i+'_'+j)>-1 && MAP[i][j]==undefined) {
    			console.log('NEED TO CREATE :'+i+'_'+j)

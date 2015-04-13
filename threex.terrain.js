@@ -43,7 +43,7 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			level	*= 3
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.35
 			level	*= 2
-			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.5
+			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * .7
 			level	*= 2
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 1
 			height	/= 1+0.5+0.25+0.125
@@ -51,14 +51,16 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			var xs = 0;
   var ys = 0;
  
-  xs = x - 5000;
+  xs = x - 2000;
   xs = xs * xs;
  
-  ys = z - 5000;
+  ys = z - 2000;
   ys = ys * ys;
  
   var d= Math.sqrt( xs + ys );
-  height-=d/7000
+  height-=d/2700
+  //if (d>2000)
+//  height*=1.2
 
 			heightMap[x-xx][z-zz]	= height*20
 
