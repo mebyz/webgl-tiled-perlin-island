@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src='threex.min.js'></script>
 <script src='FlyControls.js'></script>
 <script src='SimplexNoise.js'></script>
@@ -40,7 +39,6 @@ varying float vAmount;
 
 void main() 
 {
-
 	vec4 water = (smoothstep(0.01, 0.15, vAmount) - smoothstep(0.14, 0.16, vAmount)) * texture2D( oceanTexture, vUV * 10.0 );
 	vec4 sandy = (smoothstep(0.14, 0.16, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
 	vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
@@ -69,22 +67,32 @@ var MAPMESHES = new Array(MAXTILES);
     MAPMESHES[i] = new Array(MAXTILES);
   }
 
+  var MAPGRASS = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAPGRASS[i] = new Array(MAXTILES);
+  }
+  var MAPGRASS2 = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAPGRASS2[i] = new Array(MAXTILES);
+  }
+  var MAPGRASS3 = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAPGRASS3[i] = new Array(MAXTILES);
+  }
+  var MAPGRASS4 = new Array(MAXTILES);
+  for (var i = 0; i < MAXTILES; i++) {
+    MAPGRASS4[i] = new Array(MAXTILES);
+  }
+
 	var okok=true;
 function initSky(){
-
-				// Add Sky Mesh
 				sky = new THREE.Sky();
 				scene.add( sky.mesh );
-
-
-				// Add Sun Helper
 				sunSphere = new THREE.Mesh( new THREE.SphereGeometry( 20000, 30, 30 ),
 					new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false }));
 				sunSphere.position.y = -700000;
 				sunSphere.visible = true;
 				scene.add( sunSphere );
-
-				/// GUI
 
 				var effectController  = {
 					turbidity: 10,
@@ -96,8 +104,6 @@ function initSky(){
 					azimuth: 0.25, // Facing front,
 					sun: !true
 				}
-
-
 
 				function guiChanged() {
 					var uniforms = sky.uniforms;
@@ -120,10 +126,7 @@ function initSky(){
 
 				}
 
-
 				var gui = new dat.GUI();
-
-
 				gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
 				gui.add( effectController, "reileigh", 0.0, 4, 0.001 ).onChange( guiChanged );
 				gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
@@ -133,25 +136,18 @@ function initSky(){
 				gui.add( effectController, "azimuth", 0, 1, 0.0001).onChange( guiChanged );
 				gui.add( effectController, "sun").onChange( guiChanged );
 
-
 				guiChanged();
-
-
 				camera.lookAt(sunSphere.position)
-
-
 			}
-
-
 var distance = 400000;
-				var nature_models=[];
-				 var i=0;
+var nature_models=[];
+var i=0;
 
-	        for(var index in nature_) {
-	            var fobj='../'+nature_[index].obj;
-	            var ftext = '/'+nature_[index].png;
-	            loadTree(ftext,fobj,i++);
-	        }
+for(var index in nature_) {
+	var fobj='../'+nature_[index].obj;
+	var ftext = '/'+nature_[index].png;
+	loadTree(ftext,fobj,i++);
+}
 	        
 function loadTree(t,o,i) {
         var manager = new THREE.LoadingManager();
@@ -200,216 +196,216 @@ var snowyTexture = new loadImage( 'snow-512.jpg' );
 snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping; 
 
 
-	var TILES = 2
+var TILES = 2
 
-	var moveForward = false;
-	var moveBackward = false;
-	var moveLeft = false;
-	var moveRight = false;
-	var gmesh,water,hemiLight,light;
-	var posgrass = [];
-	var posgrass2 = [];
-	var posgrass3 = [];
-	var posgrass4 = [];
-	var postrees = [];
-	var  controls;
-	var controlsEnabled = false;
-	var renderer	= new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-	var velocity = new THREE.Vector3();
-	var onRenderFcts= [];
-	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000000);
-	controls = new THREE.PointerLockControls( camera );
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var gmesh,water,hemiLight,light;
+var posgrass = [];
+var posgrass2 = [];
+var posgrass3 = [];
+var posgrass4 = [];
+var postrees = [];
+var  controls;
+var controlsEnabled = false;
+var renderer	= new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+var velocity = new THREE.Vector3();
+var onRenderFcts= [];
+var scene	= new THREE.Scene();
+var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000000);
+controls = new THREE.PointerLockControls( camera );
 //	controls.getObject().position.x=3000
 //controls.getObject().position.z=3000
-	scene.add( controls.getObject() );
-	var blocker = document.getElementById( 'blocker' );
-	var instructions = document.getElementById( 'instructions' );
-	if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+scene.add( controls.getObject() );
+var blocker = document.getElementById( 'blocker' );
+var instructions = document.getElementById( 'instructions' );
+if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-						controlsEnabled = true;
-						controls.enabled = true;
-						blocker.style.display = 'none';
+					controlsEnabled = true;
+					controls.enabled = true;
+					blocker.style.display = 'none';
 
-					} else {
+				} else {
 
-						controls.enabled = false;
-						blocker.style.display = '-webkit-box';
-						blocker.style.display = '-moz-box';
-						blocker.style.display = 'box';
-						instructions.style.display = '';
-					}
-
-			var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-			if ( havePointerLock ) {
-
-				var element = document.body;
-
-				var pointerlockchange = function ( event ) {
-
-					if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
-
-						controlsEnabled = true;
-						controls.enabled = true;
-
-						blocker.style.display = 'none';
-
-					} else {
-
-						controls.enabled = false;
-
-						blocker.style.display = '-webkit-box';
-						blocker.style.display = '-moz-box';
-						blocker.style.display = 'box';
-
-						instructions.style.display = '';
-
-					}
-
+					controls.enabled = false;
+					blocker.style.display = '-webkit-box';
+					blocker.style.display = '-moz-box';
+					blocker.style.display = 'box';
+					instructions.style.display = '';
 				}
 
-				var pointerlockerror = function ( event ) {
+		var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+		if ( havePointerLock ) {
+
+			var element = document.body;
+
+			var pointerlockchange = function ( event ) {
+
+				if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+					controlsEnabled = true;
+					controls.enabled = true;
+
+					blocker.style.display = 'none';
+
+				} else {
+
+					controls.enabled = false;
+
+					blocker.style.display = '-webkit-box';
+					blocker.style.display = '-moz-box';
+					blocker.style.display = 'box';
 
 					instructions.style.display = '';
 
 				}
 
-				// Hook pointer lock state change events
-				document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-				document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-				document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+			}
 
-				document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-				document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-				document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+			var pointerlockerror = function ( event ) {
 
-				instructions.addEventListener( 'click', function ( event ) {
-
-					instructions.style.display = 'none';
-
-					// Ask the browser to lock the pointer
-					element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-
-					if ( /Firefox/i.test( navigator.userAgent ) ) {
-
-						var fullscreenchange = function ( event ) {
-
-							if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
-
-								document.removeEventListener( 'fullscreenchange', fullscreenchange );
-								document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-
-								element.requestPointerLock();
-							}
-
-						}
-
-						document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-						document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
-
-						element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-
-						element.requestFullscreen();
-
-					} else {
-
-						element.requestPointerLock();
-
-					}
-
-				}, false );
-
-			} else {
-
-				instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+				instructions.style.display = '';
 
 			}
 
-			
-	var onKeyDown = function ( event ) {
+			// Hook pointer lock state change events
+			document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+			document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+			document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
 
-					switch ( event.keyCode ) {
+			document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+			document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+			document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
-						case 38: // up
-						case 87: // w
-							moveForward = true;
-							break;
+			instructions.addEventListener( 'click', function ( event ) {
 
-						case 37: // left
-						case 65: // a
-							moveLeft = true; break;
+				instructions.style.display = 'none';
 
-						case 40: // down
-						case 83: // s
-							moveBackward = true;
-							break;
+				// Ask the browser to lock the pointer
+				element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
 
-						case 39: // right
-						case 68: // d
-							moveRight = true;
-							break;
+				if ( /Firefox/i.test( navigator.userAgent ) ) {
 
-						case 32: // space
-							if ( canJump === true ) velocity.y += 350;
-							canJump = false;
-							break;
+					var fullscreenchange = function ( event ) {
 
-					}
+						if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
 
-				};
+							document.removeEventListener( 'fullscreenchange', fullscreenchange );
+							document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
 
-				var onKeyUp = function ( event ) {
-
-					switch( event.keyCode ) {
-
-						case 38: // up
-						case 87: // w
-							moveForward = false;
-							break;
-
-						case 37: // left
-						case 65: // a
-							moveLeft = false;
-							break;
-
-						case 40: // down
-						case 83: // s
-							moveBackward = false;
-							break;
-
-						case 39: // right
-						case 68: // d
-							moveRight = false;
-							break;
+							element.requestPointerLock();
+						}
 
 					}
 
-				};
+					document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+					document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
 
-				document.addEventListener( 'keydown', onKeyDown, false );
-				document.addEventListener( 'keyup', onKeyUp, false );
+					element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+
+					element.requestFullscreen();
+
+				} else {
+
+					element.requestPointerLock();
+
+				}
+
+			}, false );
+
+		} else {
+
+			instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+
+		}
+
+		
+var onKeyDown = function ( event ) {
+
+				switch ( event.keyCode ) {
+
+					case 38: // up
+					case 87: // w
+						moveForward = true;
+						break;
+
+					case 37: // left
+					case 65: // a
+						moveLeft = true; break;
+
+					case 40: // down
+					case 83: // s
+						moveBackward = true;
+						break;
+
+					case 39: // right
+					case 68: // d
+						moveRight = true;
+						break;
+
+					case 32: // space
+						if ( canJump === true ) velocity.y += 350;
+						canJump = false;
+						break;
+
+				}
+
+			};
+
+			var onKeyUp = function ( event ) {
+
+				switch( event.keyCode ) {
+
+					case 38: // up
+					case 87: // w
+						moveForward = false;
+						break;
+
+					case 37: // left
+					case 65: // a
+						moveLeft = false;
+						break;
+
+					case 40: // down
+					case 83: // s
+						moveBackward = false;
+						break;
+
+					case 39: // right
+					case 68: // d
+						moveRight = false;
+						break;
+
+				}
+
+			};
+
+			document.addEventListener( 'keydown', onKeyDown, false );
+			document.addEventListener( 'keyup', onKeyUp, false );
 
 //				controls.addEventListener( 'change', render );
 
 //				camera.lookAt( new THREE.Vector3(0,0,0))
-	;(function(){
+;(function(){
 /*		var light	= new THREE.AmbientLight( 0x666666)
-		scene.add( light )
-		var light	= new THREE.DirectionalLight('0xccddee', 2)
-		light.position.set(0.5, 0.0, 2)
-		scene.add( light )
-		var light	= new THREE.DirectionalLight('white', 5)
-		light.position.set(0.5, 0.0, 2)
-		scene.add( light )
-		*/ light	= new THREE.DirectionalLight('white', 0.75*2)
-		light.position.set(-0.5, -0.5, -2)
-		scene.add( light )		
-		hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, .5 ); 
-		scene.add( hemiLight )		
-		
-	})()
+	scene.add( light )
+	var light	= new THREE.DirectionalLight('0xccddee', 2)
+	light.position.set(0.5, 0.0, 2)
+	scene.add( light )
+	var light	= new THREE.DirectionalLight('white', 5)
+	light.position.set(0.5, 0.0, 2)
+	scene.add( light )
+	*/ light	= new THREE.DirectionalLight('white', 0.75*2)
+	light.position.set(-0.5, -0.5, -2)
+	scene.add( light )		
+	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, .5 ); 
+	scene.add( hemiLight )		
+	
+})()
 
 var cube
 var heightMap,mesh,geometry,material;
@@ -417,36 +413,22 @@ var heightMap,mesh,geometry,material;
 
 for (var i = 0; i < TILES; i++) {
 for (var j = 0; j < TILES; j++) {
-
-	
-addTile(i,j)
-
+	addTile(i,j)
 }
 }
-/*		 var posgrass = [];
-		 posgrass.push(new THREE.Vector3(0,0,0));
-		 posgrass.push(new THREE.Vector3(100,0,100));
-		 posgrass.push(new THREE.Vector3(200,0,200));
-		 posgrass.push(new THREE.Vector3(300,0,300));
-		 posgrass.push(new THREE.Vector3(400,0,400));
-		 posgrass.push(new THREE.Vector3(500,0,500));*/
-//		 posgrass.push(new THREE.Vector3(100,100,100));
-//		 posgrass.push(new THREE.Vector3(12,12,12));
 
 gmesh    = new THREEx.createGrassTufts(posgrass,'images/grass01.png')
 scene.add(gmesh)
-gmesh    = new THREEx.createGrassTufts(posgrass2,'images/grass02.png')
-scene.add(gmesh)
-gmesh    = new THREEx.createGrassTufts(posgrass3,'images/flowers01.png')
-scene.add(gmesh)
-gmesh    = new THREEx.createGrassTufts(posgrass4,'images/flowers02.png')
-scene.add(gmesh)
+//gmesh    = new THREEx.createGrassTufts(posgrass2,'images/grass02.png')
+//scene.add(gmesh)
+//gmesh    = new THREEx.createGrassTufts(posgrass3,'images/flowers01.png')
+//scene.add(gmesh)
+//gmesh    = new THREEx.createGrassTufts(posgrass4,'images/flowers02.png')
+//scene.add(gmesh)
 
 setTimeout(function(){
 
-
 for (var i = 0; i < postrees.length; i++) {
-
 var r = Math.round(Math.random()*68)
 if (nature_models[r]!= undefined){ 
 var child = nature_models[r].clone();
@@ -511,7 +493,24 @@ var data = e.data;
   y=data.data.y
  heightMap	= THREEx.Terrain.allocateHeightMap(HEIGHTMAPSIZE, HEIGHTMAPSIZE)
 	THREEx.Terrain.simplexHeightMap(heightMap,(HEIGHTMAPSIZE-1)*x,(HEIGHTMAPSIZE-1)*y)
-	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
+	p =[]
+	p2 =[]
+	p3 =[]
+	p4 =[]
+	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y,p,p2,p3,p4)
+	gp    = new THREEx.createGrassTufts(p,'images/grass01.png')
+	scene.add(gp)
+MAPGRASS[x][y]=gp
+gp    = new THREEx.createGrassTufts(p2,'images/grass02.png')
+scene.add(gp)
+MAPGRASS2[x][y]=gp
+gp    = new THREEx.createGrassTufts(p3,'images/flowers01.png')
+scene.add(gp)
+MAPGRASS3[x][y]=gp
+gp    = new THREEx.createGrassTufts(p4,'images/flowers02.png')
+scene.add(gp)
+MAPGRASS4[x][y]=gp
+
 
 	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
 
@@ -564,7 +563,24 @@ if (no!=true) {
 
  heightMap	= THREEx.Terrain.allocateHeightMap(HEIGHTMAPSIZE, HEIGHTMAPSIZE)
 	THREEx.Terrain.simplexHeightMap(heightMap,(HEIGHTMAPSIZE-1)*x,(HEIGHTMAPSIZE-1)*y)
-	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y)
+p =[]
+	p2 =[]
+	p3 =[]
+	p4 =[]
+	 geometry	= THREEx.Terrain.heightMapToPlaneGeometry(heightMap,x,y,p,p2,p3,p4)
+	gp    = new THREEx.createGrassTufts(p,'images/grass01.png')
+	scene.add(gp)
+MAPGRASS[x][y]=gp
+gp    = new THREEx.createGrassTufts(p2,'images/grass02.png')
+scene.add(gp)
+MAPGRASS2[x][y]=gp
+gp    = new THREEx.createGrassTufts(p3,'images/flowers01.png')
+scene.add(gp)
+MAPGRASS3[x][y]=gp
+gp    = new THREEx.createGrassTufts(p4,'images/flowers02.png')
+scene.add(gp)
+MAPGRASS4[x][y]=gp
+
 
 	THREEx.Terrain.heightMapToVertexColor(heightMap, geometry)
 
@@ -701,7 +717,10 @@ nearbytiles.push(i+'_'+j);
    		if (nearbytiles.indexOf(i+'_'+j)<0 && MAP[i][j]!=undefined) {
    			console.log('NEED TO DESTROY : '+i+'_'+j)
    			scene.remove(MAPMESHES[i][j]);
-
+scene.remove(MAPGRASS[i][j])
+scene.remove(MAPGRASS2[i][j])
+scene.remove(MAPGRASS3[i][j])
+scene.remove(MAPGRASS4[i][j])
 MAPMESHES[i][j].geometry.dispose();
 MAPMESHES[i][j].material.dispose();
 MAPMESHES[i][j]=null
@@ -756,7 +775,7 @@ $('#pos').html(Math.round(controls.getObject().position.x)+' '+Math.round(contro
 	onRenderFcts.push(function(){
 				water.material.uniforms.time.value += 1.0 / 60.0;
 				
-				water.render();
+//				water.render();
 		renderer.render( scene, camera );		
 	})
 	var lastTimeMsec= null
