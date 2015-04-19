@@ -39,26 +39,28 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			// compute the height
 			var height	= 0
 			var level	= 8
-			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.125
+			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.25
 			level	*= 3
-			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.35
-			level	*= 2
-			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * .7
+			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 0.7
 			level	*= 2
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 1
+			level	*= 2
+			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 1.8
 			height	/= 1+0.5+0.25+0.125
+			height *=1.6
 			// put the height in the heightMap
-			var xs = 0;
+  
+  var xs = 0;
   var ys = 0;
  
-  xs = x - 500;
+  xs = x - 250;
   xs = xs * xs;
  
-  ys = z - 500;
+  ys = z - 250;
   ys = ys * ys;
  
   var d= Math.sqrt( xs + ys );
-  height-=d/400000*d
+  height-=(d/100)*d/450 - 2*(1000 - xs+1000 - ys)/200000
   //if (d>2000)
 //  height*=1.2
 
@@ -104,7 +106,7 @@ THREEx.Terrain.heightMapToCanvas	= function(heightMap, canvas){
  * @param  {Array} heightMap the heightmap
  * @return {THREE.Geometry}  the just built geometry
  */
-THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4){
+THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4,pt){
 	// get heightMap dimensions
 	var width	= heightMap.length
 	var depth	= heightMap[0].length
@@ -118,8 +120,9 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4){
 			// set the vertex.z to a normalized height
 			var vertex	= geometry.vertices[x + z * width]			
 			vertex.z	= (height-0.5)*2
-			var r = Math.round(Math.random()*10);
-			var n = new THREE.Vector3(x*32+i*1000,vertex.z*10,z*32+j*1000);
+			var r = Math.round(Math.random()*11);
+			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10,z*64+j*1000);
+
 			if (r<3 && height > 0){
 			if (p!=undefined)
 				p.push(n);
@@ -138,14 +141,18 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4){
 			else
 			posgrass3.push(n);
 			}
-			if (r==9 && height >  0){
+			if (r==9 && vertex.z*10 >  -300){
 				if (p4!=undefined)
 				p4.push(n);
 			else
 			posgrass4.push(n);
 			}
-		    r = Math.round(Math.random()*1000);
-			if (r==10 && height >  0){
+				
+			if (r==10 && vertex.z*10 >  -300 ){
+
+				if (pt!=undefined)
+				pt.push(n);
+			else
 			postrees.push(n);
 			}
 		}
