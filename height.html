@@ -3,6 +3,7 @@
     var precision = 'lowp'
     var fog;
     var sky;
+    var particleGroup;
     var zt=0
     ld = false;
     var tcolor = '0.0';
@@ -18,6 +19,7 @@
 <script src="Mirror.js"></script>
 <script src="Sky.js"></script>
 <script src="WaterShader.js"></script>
+<script src="Particles.js"></script>
 <script src="nature.js"></script>
 <script type="text/javascript" src="OBJLoader.js"></script>
 
@@ -209,6 +211,34 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
 
             guiChanged();
             camera.lookAt(sunSphere.position)
+
+
+     var texture = loadImage('clouds001.png');
+
+     particleGroup = new ShaderParticleGroup({
+        texture: texture,
+        maxAge: 100
+    });
+
+     emitter = new ShaderParticleEmitter({
+        position: new THREE.Vector3(15000, 600, 15000),
+        positionSpread: new THREE.Vector3(25000, 0, 25000),
+
+        colorStart: new THREE.Color(0x000000),
+        colorSpread: new THREE.Vector3(-1, -1, -1),
+        colorEnd: new THREE.Color(0x000000),
+        size: 100000,
+        sizeSpread: 0,
+        opacityStart: 0,
+        opacityMiddle: 0.5,
+        opacityEnd: 0,
+
+        particlesPerSecond: 10,
+    });
+
+     particleGroup.addEmitter( emitter );
+     scene.add( particleGroup.mesh );
+
         }
         var distance = 400000;
         var nature_models = [];
@@ -783,7 +813,7 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
 
 
         onRenderFcts.push(function(delta, now) {
-            
+particleGroup.tick(delta)            
 zt += delta/500
 z=zt
                 var theta = Math.PI * ( z- 0.5);
