@@ -167,7 +167,7 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
                 reileigh: 2,
                 mieCoefficient: 0.005,
                 mieDirectionalG: 0.8,
-                luminance: 1,
+                luminance: 0.7,
                 inclination: 0.49, // elevation / inclination
                 azimuth: 0.25, // Facing front,
                 sun: !true
@@ -222,7 +222,7 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
 
      emitter = new ShaderParticleEmitter({
         position: new THREE.Vector3(15000, 600, 15000),
-        positionSpread: new THREE.Vector3(25000, 0, 25000),
+        positionSpread: new THREE.Vector3(35000, 200, 35000),
 
         colorStart: new THREE.Color(0x000000),
         colorSpread: new THREE.Vector3(-1, -1, -1),
