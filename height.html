@@ -2,6 +2,8 @@
 <script type="text/javascript">
     var precision = 'lowp'
     var fog;
+    var sky;
+    var zt=0
     ld = false;
     var tcolor = '0.0';
 </script>
@@ -178,6 +180,7 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
                 uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
 
                 var theta = Math.PI * (effectController.inclination - 0.5);
+
                 scene.fog.color.r = 0.5 - effectController.inclination * 2
                 scene.fog.color.g = 0.5 - effectController.inclination * 2
                 scene.fog.color.b = 0.5 - effectController.inclination * 2
@@ -780,6 +783,22 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
 
 
         onRenderFcts.push(function(delta, now) {
+            
+zt += delta/500
+z=zt
+                var theta = Math.PI * ( z- 0.5);
+                
+                scene.fog.color.r = 0.5 - z * 2
+                scene.fog.color.g = 0.5 - z * 2
+                scene.fog.color.b = 0.5 - z * 2
+
+                var phi = 2 * Math.PI * (0.25 - 0.5);
+
+                sunSphere.position.x = distance * Math.cos(phi);
+                sunSphere.position.y = distance * Math.sin(phi) * Math.sin(theta);
+                sunSphere.position.z = distance * Math.sin(phi) * Math.cos(theta);
+
+                sky.uniforms.sunPosition.value.copy(sunSphere.position);
             //		camera.position.x += (mouse.x*500000 - camera.position.x) 
             //		camera.position.z+= (mouse.y*500000 - (camera.position.z))
 
