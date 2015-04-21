@@ -63,10 +63,12 @@ void main()
 {
 	vec3 outgoingLight = vec3( 1.0 );
 	vec4 water = (smoothstep(0.0, 0.1, vAmount) - smoothstep(0.04, 0.16, vAmount)) * texture2D( oceanTexture, vUV * 100.0 );
-	vec4 sandy = (smoothstep(0.05, 0.16, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
-	vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
-	vec4 rocky = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.80, 0.95, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
-	vec4 snowy = (smoothstep(0.80, 0.95, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
+	vec4 sandy = (smoothstep(0.04, 0.16, vAmount) - smoothstep(0.18, 0.32, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
+	vec4 grass = (smoothstep(0.18, 0.32, vAmount) - smoothstep(0.65, 0.75, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
+	vec4 rocky = (smoothstep(0.65, 0.75, vAmount) - smoothstep(0.78, 0.82, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
+	vec4 snowy = (smoothstep(0.78, 0.82, vAmount) - smoothstep(0.85, 0.90, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
+
+    vec4 snowy2 = ( smoothstep(0.85, 0.90, vAmount))                                   * texture2D( snowyTexture, vUV * 20.0 );
 	float tcolor = 0.5;
 	
 #ifdef USE_FOG
@@ -93,7 +95,7 @@ void main()
 	#endif
 	
 	outgoingLight = mix( outgoingLight, fogColor, fogFactor );
-gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky + snowy) * outgoingLight.x; //, 1.0);
+gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky + snowy + snowy2) * outgoingLight.x; //, 1.0);
 
 #endif
 }  
@@ -557,7 +559,7 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
 
         mirrorMesh.add(water);
         mirrorMesh.rotation.x = -Math.PI * 0.5;
-        mirrorMesh.position.y = -320;
+        mirrorMesh.position.y = -200;
         mirrorMesh.position.x = 500;
         mirrorMesh.position.z = 500;
         mirrorMesh.scale.multiplyScalar(1)
@@ -921,14 +923,14 @@ gl_FragColor = vec4(tcolor, tcolor, tcolor, 1.0) *(water + sandy + grass + rocky
                 //			||
                 //			controls.getObject().position.x>1000*TILES-1 || controls.getObject().position.z >1000*TILES-1
             )
-                controls.getObject().position.y = -300
+                controls.getObject().position.y = -150
             else {
 
                 //		controls.getObject().position.y=THREEx.Terrain.planeToHeightMapCoords(heightMaps[tcx+tcz], meshes[tcx+tcz], cx/2, cz/2)+400
 
 
                 if (ld == true) controls.getObject().position.y = THREEx.Terrain.planeToHeightMapCoords(MAP[tcx][tcz], MAPMESHES[tcx][tcz], cx, cz) + 20
-                if (controls.getObject().position.y < -300) controls.getObject().position.y = -300
+                if (controls.getObject().position.y < -150) controls.getObject().position.y = -150
             }
 
             //				mirrorMesh.position.y = - 1600;

@@ -47,7 +47,7 @@ THREEx.Terrain.simplexHeightMap	= function(heightMap,xx,zz){
 			level	*= 2
 			height	+= (simplex.noise((x)/level, (z)/level)/2 + 0.5) * 1.8
 			height	/= 1+0.5+0.25+0.125
-			height *=1.6
+			height *=1.4
 			// put the height in the heightMap
   
   var xs = 0;
@@ -127,32 +127,32 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4,pt){
 			var r = Math.round(i*j*x*z%11);
 			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10-10,z*64+j*1000);
 
-			if (r<3 && height > 0){
+			if (r<3 && vertex.z*10 >  -150){
 			if (p!=undefined)
 				p.push(n);
 			else
 				posgrass.push(n);
 			}
-			if (r>=3 && r<9 && height >  0 ){
+			if (r>=3 && r<9 && vertex.z*10 >  -150 ){
 				if (p2!=undefined)
 				p2.push(n);
 			else
 			posgrass2.push(n);
 			}
-			if (r==8 && height >  0){
+			if (r==8 && vertex.z*10 >  -150){
 				if (p3!=undefined)
 				p3.push(n);
 			else
 			posgrass3.push(n);
 			}
-			if (r==9 && vertex.z*10 >  -300){
+			if (r==9 && vertex.z*10 >  -150){
 				if (p4!=undefined)
 				p4.push(n);
 			else
 			posgrass4.push(n);
 			}
 				
-			if (r==10 && vertex.z*10 >  -300 ){
+			if (r==10 && vertex.z*10 >  -150){
 				n.y+=5
 				if (pt!=undefined)
 				pt.push(n);
