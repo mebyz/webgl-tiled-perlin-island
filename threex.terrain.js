@@ -125,7 +125,7 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4,pt){
 
 //			var r = Math.round(Math.random()*11);
 			var r = Math.round(i*j*x*z%11);
-			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10-5,z*64+j*1000);
+			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10-10,z*64+j*1000);
 
 			if (r<3 && height > 0){
 			if (p!=undefined)
@@ -153,7 +153,7 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4,pt){
 			}
 				
 			if (r==10 && vertex.z*10 >  -300 ){
-
+				n.y+=5
 				if (pt!=undefined)
 				pt.push(n);
 			else

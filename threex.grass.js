@@ -1,7 +1,7 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.createGrassTufts	= function(positions,t){
-	var geometry	= new THREE.PlaneGeometry(40, 30)
+	var geometry	= new THREE.PlaneGeometry(40, 40)
 	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, geometry.parameters.height/2, 0 ) );
 			
 	geometry.faces.forEach(function(face){
