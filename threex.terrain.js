@@ -120,8 +120,12 @@ THREEx.Terrain.heightMapToPlaneGeometry	= function(heightMap,i,j,p,p2,p3,p4,pt){
 			// set the vertex.z to a normalized height
 			var vertex	= geometry.vertices[x + z * width]			
 			vertex.z	= (height-0.5)*2
-			var r = Math.round(Math.random()*11);
-			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10,z*64+j*1000);
+
+
+
+//			var r = Math.round(Math.random()*11);
+			var r = Math.round(i*j*x*z%11);
+			var n = new THREE.Vector3(x*64+i*1000,vertex.z*10-5,z*64+j*1000);
 
 			if (r<3 && height > 0){
 			if (p!=undefined)

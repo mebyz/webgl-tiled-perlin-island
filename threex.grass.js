@@ -1,7 +1,7 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.createGrassTufts	= function(positions,t){
-	var geometry	= new THREE.PlaneGeometry(40, 20)
+	var geometry	= new THREE.PlaneGeometry(40, 30)
 	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, geometry.parameters.height/2, 0 ) );
 			
 	geometry.faces.forEach(function(face){
@@ -13,7 +13,7 @@ THREEx.createGrassTufts	= function(positions,t){
 	var mergedGeo	= new THREE.Geometry();
 	for(var i = 0; i < positions.length; i++){
 		var position	= positions[i]			
-		var baseAngle	= Math.PI*2*Math.random()
+		var baseAngle	= Math.PI*2*i/10
 		var g = geometry.clone();
 		var rotation = new THREE.Matrix4().makeRotationY(baseAngle);
 		g.applyMatrix(rotation);
